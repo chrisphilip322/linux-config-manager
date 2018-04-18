@@ -1,0 +1,251 @@
+
+" An example for a vimrc file.
+"
+" Maintainer:    Bram Moolenaar <Bram@vim.org>
+" Last change:    2008 Jul 02
+"
+" To use it, copy it to
+"     for Unix and OS/2:  ~/.vimrc
+"          for Amiga:  s:.vimrc
+"  for MS-DOS and Win32:  $VIM\_vimrc
+"        for OpenVMS:  sys$login:.vimrc
+
+" When started as "evim", evim.vim will already have done these settings.
+if v:progname =~? "evim"
+  finish
+endif
+
+" Use Vim settings, rather then Vi settings (much better!).
+" This must be first, because it changes other options as a side effect.
+set nocompatible
+
+" allow backspacing over everything in insert mode
+set backspace=indent,eol,start
+
+set history=50        " keep 50 lines of command line history
+set ruler        " show the cursor position all the time
+set showcmd        " display incomplete commands
+set incsearch        " do incremental searching
+
+" For Win32 GUI: remove 't' flag from 'guioptions': no tearoff menu entries
+" let &guioptions = substitute(&guioptions, "t", "", "g")
+
+" Don't use Ex mode, use Q for formatting
+map Q gq
+
+" CTRL-U in insert mode deletes a lot.  Use CTRL-G u to first break undo,
+" so that you can undo CTRL-U after inserting a line break.
+inoremap <C-U> <C-G>u<C-U>
+
+" Switch syntax highlighting on, when the terminal has colors
+" Also switch on highlighting the last used search pattern.
+if &t_Co > 2 || has("gui_running")
+  syntax on
+  set hlsearch
+endif
+
+" Only do this part when compiled with support for autocommands.
+if has("autocmd")
+
+  " Enable file type detection.
+  " Use the default filetype settings, so that mail gets 'tw' set to 72,
+  " 'cindent' is on in C files, etc.
+  " Also load indent files, to automatically do language-dependent indenting.
+  filetype plugin indent on
+
+  " Put these in an autocmd group, so that we can delete them easily.
+  augroup vimrcEx
+  au!
+
+  " For all text files set 'textwidth' to 78 characters.
+  autocmd FileType text setlocal textwidth=78
+
+  " When editing a file, always jump to the last known cursor position.
+  " Don't do it when the position is invalid or when inside an event handler
+  " (happens when dropping a file on gvim).
+  " Also don't do it when the mark is in the first line, that is the default
+  " position when opening a file.
+  autocmd BufReadPost *
+    \ if line("'\"") > 1 && line("'\"") <= line("$") |
+    \   exe "normal! g`\"" |
+    \ endif
+
+  augroup END
+
+else
+
+  set autoindent        " always set autoindenting on
+
+endif " has("autocmd")
+
+" Convenient command to see the difference between the current buffer and the
+" file it was loaded from, thus the changes you made.
+" Only define it when not defined already.
+if !exists(":DiffOrig")
+  command DiffOrig vert new | set bt=nofile | r # | 0d_ | diffthis
+          \ | wincmd p | diffthis
+endif
+
+syntax enable
+colorscheme cphilip
+let mapleader = "\\"
+
+" Function to automatically create directories when saving new files
+function s:MkNonExDir(file, buf)
+    if empty(getbufvar(a:buf, '&buftype')) && a:file!~#'\v^\w+\:\/'
+        let dir=fnamemodify(a:file, ':h')
+        if !isdirectory(dir)
+            call mkdir(dir, 'p')
+        endif
+    endif
+endfunction
+augroup BWCCreateDir
+    autocmd!
+    autocmd BufWritePre * :call s:MkNonExDir(expand('<afile>'), +expand('<abuf>'))
+augroup END
+
+set softtabstop=4
+set shiftwidth=4
+set tabstop=4
+set expandtab
+set autoread
+set splitbelow
+set splitright
+
+function! SetupElm()
+    setlocal softtabstop=2
+    setlocal shiftwidth=2
+    setlocal tabstop=2
+    setlocal expandtab
+endfunction
+command! -bar SetupElm call SetupElm()
+autocmd FileType elm :SetupElm
+
+set number
+set t_Co=256
+nnoremap - ddp
+nnoremap _ ddkP
+noremap <c-d> <esc>:q<cr>
+
+nnoremap ; :
+inoremap <c-o> <esc><S-Insert>o
+nnoremap <leader>h :nohl<cr>
+nnoremap ^ k:s/\n\s*//<cr>:nohl<cr>
+nnoremap <leader>s 81<bar>bi'<cr>'<esc>
+
+nnoremap <leader>w :silent! vertical resize 83<CR>
+
+vnoremap <leader>/ y/\V<C-R>"<CR>
+
+autocmd BufRead,BufNewFile *.ts set filetype=typescript
+set noruler
+set laststatus=2
+set nobackup
+
+if empty(glob('~/.vim/autoload/plug.vim'))
+  silent !curl -fLo ~/.vim/autoload/plug.vim --create-dirs
+    \ https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
+  autocmd VimEnter * PlugInstall --sync | source $MYVIMRC
+endif
+
+call plug#begin('~/.vim/plugged')
+Plug 'junegunn/fzf', { 'dir': '~/.local/share/fzf', 'do': './install --all' }
+Plug 'junegunn/fzf.vim'
+Plug 'w0rp/ale'
+Plug 'tpope/vim-commentary'
+Plug 'isruslan/vim-es6'
+Plug 'elmcast/elm-vim'
+Plug 'killphi/vim-ebnf'
+call plug#end()
+
+""" fzf.vim options
+nmap <leader>f :Files<CR>
+
+""" ALE options
+nmap <silent> <leader>lp <Plug>(ale_previous_wrap)
+nmap <silent> <leader>ln <Plug>(ale_next_wrap)
+let g:ale_linters={
+                \   'python': ['pylint']
+                \ }
+
+set statusline=%f\ %y\ %r%m%=\ %3cx%03l/%03L
+set cinkeys-=:
+set number
+set rnu
+set mouse=nicr
+
+set list
+set listchars=tab:>-
+
+set foldmethod=indent
+set foldlevel=99
+nnoremap <space> za
+hi Folded ctermbg=240
+
+nnoremap <C-J> <C-W><C-J>
+nnoremap <C-H> <C-W><C-H>
+nnoremap <C-K> <C-W><C-K>
+nnoremap <C-L> <C-W><C-L>
+
+let &colorcolumn=join(range(80,80),",")
+
+"""
+" Easy Motion Options
+nnoremap s <Plug>(easymotion-overwin-f2)
+
+" Turn on case insensitive feature
+let g:EasyMotion_smartcase = 1
+
+" JK motions: Line motions
+" noremap <Leader>j <Plug>(easymotion-j)
+" noremap <Leader>k <Plug>(easymotion-k)
+"""
+
+nnoremap <c-o> o<esc>
+inoremap <c-o> <esc>o
+inoremap <c-k> <esc>O
+
+highlight ExtraWhitespace ctermbg=red guibg=red
+match ExtraWhitespace /\s\+$/
+autocmd BufWinEnter * match ExtraWhitespace /\s\+$/
+autocmd InsertEnter * match ExtraWhitespace /\s\+\%#\@<!$/
+autocmd InsertLeave * match ExtraWhitespace /\s\+$/
+autocmd BufWinLeave * call clearmatches()
+
+nnoremap <unique> <leader>d :s/\n\s*//<cr>:nohl<cr>
+nnoremap <leader><space> 0/([^)]\\|,.\\|[^ (])<cr>a<cr><esc>:nohl<cr>
+autocmd FileType javascript nnoremap <leader><space> 0/(.\\|,.\\|[^ (])<cr>a<cr><esc>:nohl<cr>
+
+set ttymouse=sgr
+
+"""
+" Automatic paste mode when pasting
+"""
+
+function! WrapForTmux(s)
+  if !exists('$TMUX')
+    return a:s
+  endif
+
+  let tmux_start = "\<Esc>Ptmux;"
+  let tmux_end = "\<Esc>\\"
+
+  return tmux_start . substitute(a:s, "\<Esc>", "\<Esc>\<Esc>", 'g') . tmux_end
+endfunction
+
+let &t_SI .= WrapForTmux("\<Esc>[?2004h")
+let &t_EI .= WrapForTmux("\<Esc>[?2004l")
+
+function! XTermPasteBegin()
+  set pastetoggle=<Esc>[201~
+  set paste
+  return ""
+endfunction
+
+inoremap <special> <expr> <Esc>[200~ XTermPasteBegin()
+
+"""
+" DONE
+"""
+
+let g:elm_setup_keybindings = 0

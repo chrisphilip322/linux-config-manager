@@ -1,0 +1,13 @@
+[push]
+    default = current
+[alias]
+    s = status
+    l = log --oneline -n 20
+    amend = commit -a --amend --no-edit
+    dt = difftool
+[color]
+    ui = auto
+[diff]
+    tool = vimdiff
+[difftool]
+    prompt = false

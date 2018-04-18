@@ -1,0 +1,14 @@
+build
+dist
+.p4rc
+.gitignore
+*.swp
+*.bak
+*.swo
+.nfs*
+*.vim
+*.pyc
+venv
+*.egg-info/
+.*
+Thumbs.db
