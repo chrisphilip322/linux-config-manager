@@ -7,11 +7,11 @@ cd "$SCRIPTPATH/files"
 find . -type f | while read line
 do
     target_dir="$(dirname "$line")"
-    if [[ -a "$target_dir" ]]
+    if [[ -a "$HOME/$target_dir" ]]
     then
         :
     else
-        mkdir -p "$target_dir"
+        mkdir -p "$HOME/$target_dir"
     fi
     cp "$line" "$HOME/$line"
 done

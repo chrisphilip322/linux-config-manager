@@ -7,6 +7,14 @@ cd "$SCRIPTPATH/files"
 unset files
 declare -a files
 while IFS= read -r -u3 -d $'\0' file; do
+    target_dir="$(dirname "$file")"
+    if [[ -a "$HOME/$target_dir" ]]
+    then
+        :
+    else
+        mkdir -p "$HOME/$target_dir"
+    fi
+    touch "$HOME/$file"
     files+=( "$file" )
 done 3< <(find . -type f -print0)
 cd $HOME
