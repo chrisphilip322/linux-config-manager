@@ -1,5 +1,5 @@
 [push]
-    default = matching
+    default = current
 [alias]
     s = status
     l = log --oneline -n 20
@@ -11,5 +11,3 @@
     tool = vimdiff
 [difftool]
     prompt = false
-[branch]
-    autoSetupMerge = always
