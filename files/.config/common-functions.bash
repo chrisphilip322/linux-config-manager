@@ -101,3 +101,84 @@ function mkvenv3() {
 function json() {
     python2.7 -c 'import sys, json; j = json.load(sys.stdin); json.dump(j, sys.stdout, sort_keys=True, indent=4, separators=(",", ": ")); print ""'
 }
+
+function git-branch-status() {
+    local RESET="$(tput sgr0)"
+    local BOLD="$(tput bold)"
+    local RED="$(tput setaf 9)"
+    local GREEN="$(tput setaf 10)"
+    local YELLOW="$(tput setaf 11)"
+    local current_branch="$(git-current-branch 2> /dev/null)"
+    if [[ -z "$current_branch" ]]
+    then
+        :
+    elif [[ "$current_branch" == "master" ]]
+    then
+        :
+    else
+        local commits_ahead="$(git rev-list --count "$current_branch" ^origin/master)"
+        local commits_behind="$(git rev-list --count origin/master "^$current_branch")"
+        if [[ "$commits_ahead" == "0" ]]
+        then
+            echo -e "# ${BOLD}$current_branch${RESET} is ahead of ${BOLD}origin/master${RESET} by ${GREEN}0 commits${RESET}"
+        else
+            echo -e "# ${BOLD}$current_branch${RESET} is ahead of ${BOLD}origin/master${RESET} by ${YELLOW}$commits_ahead commits${RESET}"
+        fi
+        if [[ "$commits_behind" == "0" ]]
+        then
+            echo -e "# ${BOLD}$current_branch${RESET} is behind   ${BOLD}origin/master${RESET} by ${GREEN}0 commits${RESET}"
+        else
+            echo -e "# ${BOLD}$current_branch${RESET} is behind   ${BOLD}origin/master${RESET} by ${RED}$commits_behind commits${RESET}"
+        fi
+    fi
+    local upstream_name
+    upstream_name="$(git rev-parse --abbrev-ref --symbolic-full-name @{u} 2> /dev/null)"
+    if [[ "$?" != "0" ]]
+    then
+        if git ls-remote --heads --exit-code origin "$current_branch" > /dev/null
+        then
+            echo -e "# ${RED}No upstream branch set${RESET}. Consider setting one with:"
+            echo "#     git branch -u origin/${current_branch}"
+        else
+            echo -e "# ${YELLOW}No matching remote branch${RESET}. Consider pushing with this command to set upstream info:"
+            echo "#     git push -u"
+        fi
+    fi
+    git status
+}
+
+git-current-branch () {
+    # https://github.com/sorin-ionescu/prezto/blob/master/modules/git/functions/git-branch-current
+    if ! git rev-parse 2> /dev/null
+    then
+        echo "$0: not a repository: $PWD" >&2
+        return 1
+    fi
+    local ref="$(git symbolic-ref HEAD 2> /dev/null)"
+    if [[ -n "$ref" ]]
+    then
+        echo "${ref#refs/heads/}"
+        return 0
+    else
+        return 1
+    fi
+}
+
+# Source-able file to load all functions into shell
+# Executable file that to run functions from not a shell
+# Functions without "^function " are 'private' and not runnable externally
+
+if [[ "${BASH_SOURCE[0]}" == "${0}" ]]
+then
+    if [[ $(grep "^function ${1}() {$" $0) ]]
+    then
+        "$@"
+    elif [[ $1 ]]
+    then
+        echo "$1 is not a valid function"
+        exit 1
+    else
+        echo "Pass a function name and arguments to run that function"
+        exit 1
+    fi
+fi

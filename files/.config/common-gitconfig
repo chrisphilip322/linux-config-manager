@@ -1,7 +1,7 @@
 [push]
     default = current
 [alias]
-    s = status
+    s = !$HOME/.config/common-functions.bash git-branch-status
     l = log --oneline -n 20
     amend = commit -a --amend --no-edit
     dt = difftool
