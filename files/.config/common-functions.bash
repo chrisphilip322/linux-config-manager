@@ -111,8 +111,11 @@ function git-branch-status() {
     local current_branch="$(git-current-branch 2> /dev/null)"
     if [[ -z "$current_branch" ]]
     then
-        :
-    elif [[ "$current_branch" == "master" ]]
+        return 1
+    fi
+
+    git fetch origin master 2> /dev/null
+    if [[ "$current_branch" == "master" ]]
     then
         :
     else
