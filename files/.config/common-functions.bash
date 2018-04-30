@@ -114,7 +114,7 @@ function git-branch-status() {
         return 1
     fi
 
-    git fetch origin master 2> /dev/null
+    git remote update origin > /dev/null 2>&1
     if [[ "$current_branch" == "master" ]]
     then
         :

@@ -6,7 +6,7 @@
     amend = commit -a --amend --no-edit
     dt = difftool
     fix = !$EDITOR $(git diff --name-only | uniq)
-    mark-fixed = !git diff --name-only | uniq | xargs git add
+    add-all = !git diff --name-only | uniq | xargs git add
 [color]
     ui = auto
 [diff]
