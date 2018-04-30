@@ -114,7 +114,9 @@ function git-branch-status() {
         return 1
     fi
 
-    git remote update origin > /dev/null 2>&1
+    echo -ne "$YELLOW"
+    pre-print "Updating origin..." bash -c 'git remote update origin > /dev/null 2>&1'
+    echo -ne "$RESET"
     if [[ "$current_branch" == "master" ]]
     then
         :
