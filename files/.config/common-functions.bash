@@ -114,15 +114,22 @@ function git-branch-status() {
         return 1
     fi
 
+    git remote update origin > /dev/null 2>&1 &
+    git ls-remote --heads --exit-code origin "$current_branch" > /dev/null
+    local upstream_set_result=$?
+    local statustext="$(git -c color.status=always status)"
+    git rev-parse --abbrev-ref --symbolic-full-name @{u} > /dev/null 2>&1
+    local upstream_name_result="$?"
+    local commits_ahead="$(git rev-list --count "$current_branch" ^origin/master)"
+    local commits_behind="$(git rev-list --count origin/master "^$current_branch")"
     echo -ne "$YELLOW"
-    pre-print "Updating origin..." bash -c 'git remote update origin > /dev/null 2>&1'
+    pre-print "Updating origin..." wait
     echo -ne "$RESET"
+
     if [[ "$current_branch" == "master" ]]
     then
         :
     else
-        local commits_ahead="$(git rev-list --count "$current_branch" ^origin/master)"
-        local commits_behind="$(git rev-list --count origin/master "^$current_branch")"
         if [[ "$commits_ahead" == "0" ]]
         then
             echo -e "# ${BOLD}$current_branch${RESET} is ahead of ${BOLD}origin/master${RESET} by ${GREEN}0 commits${RESET}"
@@ -136,11 +143,9 @@ function git-branch-status() {
             echo -e "# ${BOLD}$current_branch${RESET} is behind   ${BOLD}origin/master${RESET} by ${RED}$commits_behind commits${RESET}"
         fi
     fi
-    local upstream_name
-    upstream_name="$(git rev-parse --abbrev-ref --symbolic-full-name @{u} 2> /dev/null)"
-    if [[ "$?" != "0" ]]
+    if [[ "$upstream_name_result" != "0" ]]
     then
-        if git ls-remote --heads --exit-code origin "$current_branch" > /dev/null
+        if [[ $upstream_set_result == "0" ]]
         then
             echo -e "# ${RED}No upstream branch set${RESET}. Consider setting one with:"
             echo "#     git branch -u origin/${current_branch}"
@@ -149,7 +154,7 @@ function git-branch-status() {
             echo "#     git push -u"
         fi
     fi
-    git status
+    echo -e "$statustext"
 }
 
 git-current-branch () {
