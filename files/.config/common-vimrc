@@ -112,14 +112,14 @@ set autoread
 set splitbelow
 set splitright
 
-function! SetupElm()
-    setlocal softtabstop=2
-    setlocal shiftwidth=2
-    setlocal tabstop=2
-    setlocal expandtab
-endfunction
-command! -bar SetupElm call SetupElm()
-autocmd FileType elm :SetupElm
+" function! SetupElm()
+"     setlocal softtabstop=2
+"     setlocal shiftwidth=2
+"     setlocal tabstop=2
+"     setlocal expandtab
+" endfunction
+" command! -bar SetupElm call SetupElm()
+" autocmd FileType elm :SetupElm
 
 set number
 set t_Co=256
@@ -165,8 +165,15 @@ nmap <leader>f :Files<CR>
 nmap <silent> <leader>lp <Plug>(ale_previous_wrap)
 nmap <silent> <leader>ln <Plug>(ale_next_wrap)
 let g:ale_linters={
-                \   'python': ['pylint']
+                \   'python': ['pylint', 'mypy']
                 \ }
+let git_root = system('git rev-parse --show-toplevel')
+let git_root = strpart(git_root, 0, strlen(git_root)-1)
+if v:shell_error == 0
+    if filereadable(rcpath)
+        let g:ale_python_pylint_options = "--rcfile " . git_root . "/pylintrc"
+    endif
+endif
 
 set statusline=%f\ %y\ %r%m%=\ %3cx%03l/%03L
 set cinkeys-=:

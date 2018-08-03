@@ -157,7 +157,7 @@ function git-branch-status() {
     echo -e "$statustext"
 }
 
-git-current-branch () {
+git-current-branch() {
     # https://github.com/sorin-ionescu/prezto/blob/master/modules/git/functions/git-branch-current
     if ! git rev-parse 2> /dev/null
     then
@@ -171,6 +171,19 @@ git-current-branch () {
         return 0
     else
         return 1
+    fi
+}
+
+source-pyenv() {
+    if [[ -z "$PYENV_ROOT" ]]
+    then
+        export PYENV_ROOT="$HOME/.local/share/pyenv"
+        export PATH="$PATH:$PYENV_ROOT/bin"
+        if command -v pyenv 1>/dev/null 2>&1; then
+            eval "$(pyenv init -)"
+        fi
+    else
+        echo "pyenv is already setup, cannot source twice" >&2
     fi
 }
 

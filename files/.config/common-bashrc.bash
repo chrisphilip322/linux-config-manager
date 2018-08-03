@@ -3,14 +3,12 @@ alias ls="ls --color=auto"
 export PYTHONIOENCODING=UTF-8
 export EDITOR=vim
 export TERM=xterm-256color
-export PYENV_ROOT="$HOME/.local/share/pyenv"
 
 export PATH=""
 export PATH="$PATH:$HOME/.local/bin"
 export PATH="$PATH:/bin"
 export PATH="$PATH:/usr/sbin"
 export PATH="$PATH:/usr/bin"
-export PATH="$PATH:$PYENV_ROOT/bin"
 
 if [ -f ~/.fzf.bash ]
 then
@@ -28,7 +26,3 @@ fi
 
 . $HOME/.bash-completion/git-completion.bash
 . $HOME/.config/common-functions.bash
-
-# if command -v pyenv 1>/dev/null 2>&1; then
-#     eval "$(pyenv init -)"
-# fi
