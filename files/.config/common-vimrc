@@ -170,8 +170,9 @@ let g:ale_linters={
 let git_root = system('git rev-parse --show-toplevel')
 let git_root = strpart(git_root, 0, strlen(git_root)-1)
 if v:shell_error == 0
+    let rcpath = git_root . '/pylintrc'
     if filereadable(rcpath)
-        let g:ale_python_pylint_options = "--rcfile " . git_root . "/pylintrc"
+        let g:ale_python_pylint_options = "--rcfile " . rcpath
     endif
 endif
 
