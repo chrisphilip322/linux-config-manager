@@ -1,4 +1,5 @@
 alias ls="ls --color=auto"
+alias x="xargs"
 
 export PYTHONIOENCODING=UTF-8
 export EDITOR=vim

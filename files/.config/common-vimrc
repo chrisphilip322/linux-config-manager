@@ -129,13 +129,7 @@ noremap <c-d> <esc>:q<cr>
 
 nnoremap ; :
 inoremap <c-o> <esc><S-Insert>o
-nnoremap <leader>h :nohl<cr>
 nnoremap ^ k:s/\n\s*//<cr>:nohl<cr>
-nnoremap <leader>s 81<bar>bi'<cr>'<esc>
-
-nnoremap <leader>w :silent! vertical resize 83<CR>
-
-vnoremap <leader>/ y/\V<C-R>"<CR>
 
 autocmd BufRead,BufNewFile *.ts set filetype=typescript
 set noruler
@@ -158,21 +152,25 @@ Plug 'elmcast/elm-vim'
 Plug 'killphi/vim-ebnf'
 call plug#end()
 
-""" fzf.vim options
-nmap <leader>f :Files<CR>
-
 """ ALE options
 nmap <silent> <leader>lp <Plug>(ale_previous_wrap)
 nmap <silent> <leader>ln <Plug>(ale_next_wrap)
 let g:ale_linters={
-                \   'python': ['pylint', 'mypy']
+                \   'python': ['pylint', 'mypy', 'flake8'],
                 \ }
 let git_root = system('git rev-parse --show-toplevel')
 let git_root = strpart(git_root, 0, strlen(git_root)-1)
 if v:shell_error == 0
-    let rcpath = git_root . '/pylintrc'
-    if filereadable(rcpath)
-        let g:ale_python_pylint_options = "--rcfile " . rcpath
+    let g:ale_python_pylint_options = "--rcfile <(fds.lint --print-cfg pylint)"
+    let g:ale_python_flake8_options = "--config=<(fds.lint --print-cfg flake8)"
+    let mypy_cfg_path = git_root . '/setup.cfg'
+    if filereadable(mypy_cfg_path)
+        let has_mypy_section = system("grep -P '^\\[mypy\\]$' " . mypy_cfg_path)
+        if strlen(has_mypy_section) !=# 0
+            let g:ale_python_mypy_options = "--config-file " . mypy_cfg_path
+        else
+            let g:ale_python_mypy_options = "--config-file ~/.config/mypy.cfg"
+        endif
     endif
 endif
 
@@ -184,11 +182,6 @@ set mouse=nicr
 
 set list
 set listchars=tab:>-
-
-set foldmethod=indent
-set foldlevel=99
-nnoremap <space> za
-hi Folded ctermbg=240
 
 nnoremap <C-J> <C-W><C-J>
 nnoremap <C-H> <C-W><C-H>
@@ -220,7 +213,28 @@ autocmd InsertEnter * match ExtraWhitespace /\s\+\%#\@<!$/
 autocmd InsertLeave * match ExtraWhitespace /\s\+$/
 autocmd BufWinLeave * call clearmatches()
 
-nnoremap <unique> <leader>d :s/\n\s*//<cr>:nohl<cr>
+function _SplitString()
+    execute "normal! 81|bi'\<cr>'"
+endfunction
+
+function _CollapseLinePair()
+    silent! s/,$/, /
+    s/\n\s*//
+    nohl
+endfunction
+
+function _RearrangeStrings()
+    s/\(['"]\)\n\s*\1//
+    call _SplitString()
+    nohl
+endfunction
+
+nnoremap <leader>h :nohl<cr>
+nnoremap <leader>s :call _SplitString()<cr>
+nnoremap <leader>w :silent! vertical resize 86<CR>
+vnoremap <leader>/ y/\V<C-R>"<CR>
+nnoremap <unique> <leader>d :call _CollapseLinePair()<cr>
+nnoremap <unique> <leader>f :call _RearrangeStrings()<cr>
 nnoremap <leader><space> 0/([^)]\\|,.\\|[^ (])<cr>a<cr><esc>:nohl<cr>
 autocmd FileType javascript nnoremap <leader><space> 0/(.\\|,.\\|[^ (])<cr>a<cr><esc>:nohl<cr>
 

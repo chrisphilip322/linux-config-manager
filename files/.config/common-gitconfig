@@ -7,6 +7,7 @@
     dt = difftool
     fix = !$EDITOR $(git diff --name-only | uniq)
     add-all = !git diff --name-only | uniq | xargs git add
+    root = rev-parse --show-toplevel
 [color]
     ui = auto
 [diff]

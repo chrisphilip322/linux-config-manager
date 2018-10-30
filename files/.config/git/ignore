@@ -8,7 +8,6 @@ dist
 .nfs*
 *.vim
 *.pyc
-venv
 *.egg-info/
-.*
 Thumbs.db
+venv*

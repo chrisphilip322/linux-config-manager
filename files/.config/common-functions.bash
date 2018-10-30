@@ -91,11 +91,11 @@ _mkvenv_impl() {
 }
 
 function mkvenv() {
-    _mkvenv_impl "$1" "python2.7 -m virtualenv"
+    _mkvenv_impl "$1" "$(which python2.7) -m virtualenv"
 }
 
 function mkvenv3() {
-    _mkvenv_impl "$1" "python3 -m venv"
+    _mkvenv_impl "$1" "$(which python3) -m venv"
 }
 
 function json() {
@@ -114,33 +114,38 @@ function git-branch-status() {
         return 1
     fi
 
+    local target_branch="$(git config custom.targetbranch)"
+    if [[ -z ${target_branch} ]]
+    then
+        target_branch="master"
+    fi
     git remote update origin > /dev/null 2>&1 &
     git ls-remote --heads --exit-code origin "$current_branch" > /dev/null
     local upstream_set_result=$?
     local statustext="$(git -c color.status=always status)"
     git rev-parse --abbrev-ref --symbolic-full-name @{u} > /dev/null 2>&1
     local upstream_name_result="$?"
-    local commits_ahead="$(git rev-list --count "$current_branch" ^origin/master)"
-    local commits_behind="$(git rev-list --count origin/master "^$current_branch")"
+    local commits_ahead="$(git rev-list --count "$current_branch" ^origin/${target_branch})"
+    local commits_behind="$(git rev-list --count origin/${target_branch} "^$current_branch")"
     echo -ne "$YELLOW"
     pre-print "Updating origin..." wait
     echo -ne "$RESET"
 
-    if [[ "$current_branch" == "master" ]]
+    if [[ "$current_branch" == "${target_branch}" ]]
     then
         :
     else
         if [[ "$commits_ahead" == "0" ]]
         then
-            echo -e "# ${BOLD}$current_branch${RESET} is ahead of ${BOLD}origin/master${RESET} by ${GREEN}0 commits${RESET}"
+            echo -e "# ${BOLD}$current_branch${RESET} is ahead of ${BOLD}origin/${target_branch}${RESET} by ${GREEN}0 commits${RESET}"
         else
-            echo -e "# ${BOLD}$current_branch${RESET} is ahead of ${BOLD}origin/master${RESET} by ${YELLOW}$commits_ahead commits${RESET}"
+            echo -e "# ${BOLD}$current_branch${RESET} is ahead of ${BOLD}origin/${target_branch}${RESET} by ${YELLOW}$commits_ahead commits${RESET}"
         fi
         if [[ "$commits_behind" == "0" ]]
         then
-            echo -e "# ${BOLD}$current_branch${RESET} is behind   ${BOLD}origin/master${RESET} by ${GREEN}0 commits${RESET}"
+            echo -e "# ${BOLD}$current_branch${RESET} is behind   ${BOLD}origin/${target_branch}${RESET} by ${GREEN}0 commits${RESET}"
         else
-            echo -e "# ${BOLD}$current_branch${RESET} is behind   ${BOLD}origin/master${RESET} by ${RED}$commits_behind commits${RESET}"
+            echo -e "# ${BOLD}$current_branch${RESET} is behind   ${BOLD}origin/${target_branch}${RESET} by ${RED}$commits_behind commits${RESET}"
         fi
     fi
     if [[ "$upstream_name_result" != "0" ]]
@@ -175,9 +180,16 @@ git-current-branch() {
 }
 
 source-pyenv() {
+    local root=$1
+
+    if [[ -z "$root" ]]
+    then
+        root=$HOME/.local/share/pyenv
+    fi
+
     if [[ -z "$PYENV_ROOT" ]]
     then
-        export PYENV_ROOT="$HOME/.local/share/pyenv"
+        export PYENV_ROOT="$root"
         export PATH="$PATH:$PYENV_ROOT/bin"
         if command -v pyenv 1>/dev/null 2>&1; then
             eval "$(pyenv init -)"
@@ -185,6 +197,27 @@ source-pyenv() {
     else
         echo "pyenv is already setup, cannot source twice" >&2
     fi
+}
+
+tox() {
+    for var in "$@"
+    do
+        if [[ "$var" == "-l" ]] || [[ "$var" == "-a" ]] || [[ "$var" == "--notest" ]]
+        then
+            /usr/bin/env tox "$@"
+            return $?
+        fi
+    done
+    pushd $(git root) > /dev/null
+        /usr/bin/env tox -l "$@" > .tox/last-run
+    if /usr/bin/env tox "$@"
+    then
+        :
+    else
+        echo "last run failed" >> .tox/last-run
+    fi
+        git rev-parse HEAD >> .tox/last-run
+    popd > /dev/null
 }
 
 # Source-able file to load all functions into shell
