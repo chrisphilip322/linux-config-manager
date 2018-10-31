@@ -1,0 +1,73 @@
+#!/bin/sh
+
+# An example hook script to verify what is about to be pushed.  Called by "git
+# push" after it has checked the remote status, but before anything has been
+# pushed.  If this script exits with a non-zero status nothing will be pushed.
+#
+# This hook is called with the following parameters:
+#
+# $1 -- Name of the remote to which the push is being done
+# $2 -- URL to which the push is being done
+#
+# If pushing without using a named remote those arguments will be equal.
+#
+# Information about the commits which are being pushed is supplied as lines to
+# the standard input in the form:
+#
+#   <local ref> <local sha1> <remote ref> <remote sha1>
+#
+# This sample shows how to prevent push of commits where the log message starts
+# with "WIP" (work in progress).
+
+function _run_tox() {
+    pushd $(git root) > /dev/null
+    local status=0
+    if [[ -f "tox.ini" ]]
+    then
+        printf "Running tox... "
+        if tox > /dev/null 2>&1
+        then
+            echo "success"
+        elif [[ "$FORCE_PUSH" == "1" ]]
+        then
+            echo "tox failed but pushing anyways because FORCE_PUSH=1" >&2
+            status=1
+        else
+            echo "tox failed, blocking push. You can push anyways by setting the envvar FORCE_PUSH=1" 2>&1
+            status=1
+        fi
+    fi
+    popd > /dev/null
+    return $status
+}
+
+remote="$1"
+url="$2"
+
+z40=0000000000000000000000000000000000000000
+
+IFS=' '
+while read local_ref local_sha remote_ref remote_sha
+do
+    if [ "$local_sha" = $z40 ]
+    then
+        :
+        # Handle delete
+    else
+        pushd $(git root) > /dev/null
+        [[ "$(cat .tox/last-run)" == "$(/usr/bin/env tox -a; echo $local_sha)" ]]
+        last_run_valid=$?
+        popd > /dev/null
+        if [[ $last_run_valid == "0" ]]
+        then
+            :
+        else
+            if _run_tox
+            then
+                :
+            else
+                exit 1
+            fi
+        fi
+    fi
+done

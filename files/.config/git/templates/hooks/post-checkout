@@ -1,0 +1,22 @@
+#!/bin/sh
+
+z40=0000000000000000000000000000000000000000
+
+prev_head="$1"
+new_head="$2"
+checkout_type="$3"
+
+
+if [[ "$prev_head" == $z40 ]]
+then
+    origin_url="$(git config --get remote.origin.url)"
+    if [[ "$origin_url" =~ ^git\@github\.com ]] || [[ "$origin_url" =~ ^https://github\.com ]]
+    then
+        git config user.name "macbeth322"
+        git config user.email 'chrisp533@gmail.com'
+    elif [[ -n "$origin_url" ]]
+    then
+        git config user.name $(git config user.defaultName)
+        git config user.email $(git config user.defaultEmail)
+    fi
+fi
