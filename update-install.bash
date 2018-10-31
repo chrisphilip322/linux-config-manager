@@ -1,3 +1,5 @@
+#!/usr/bin/env bash
+
 # Absolute path to this script, e.g. /home/user/bin/foo.sh
 SCRIPT=$(readlink -f "$0")
 # Absolute path this script is in, thus /home/user/bin
@@ -17,5 +19,17 @@ while IFS= read -r -u3 -d $'\0' file; do
     touch "$HOME/$file"
     files+=( "$file" )
 done 3< <(find . -type f -print0)
-cd $HOME
 tar -cf "$SCRIPTPATH/backups/$(date +"%Y%m%dT%H%M%S").tar" "${files[@]}"
+
+cd "$SCRIPTPATH/files"
+find . -type f | while read line
+do
+    target_dir="$(dirname "$line")"
+    if [[ -a "$HOME/$target_dir" ]]
+    then
+        :
+    else
+        mkdir -p "$HOME/$target_dir"
+    fi
+    cp "$line" "$HOME/$line"
+done
