@@ -25,8 +25,10 @@ else
 fi
 
 # Base16 Shell
-if [ ! -n "$SSH_CLIENT" ] && [ ! -n "$SSH_TTY" ]
+if [[ $(who am i) =~ \([-a-zA-Z0-9\.]+\)$ ]]
 then
+    :  # This is an SSH conn so don't add colors
+else
     BASE16_SHELL="$HOME/.local/share/base16-shell/"
     if [[ ! -e "$BASE16_SHELL" ]]
     then
