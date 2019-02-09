@@ -25,18 +25,21 @@ else
 fi
 
 # Base16 Shell
-BASE16_SHELL="$HOME/.local/share/base16-shell/"
-if [[ ! -e "$BASE16_SHELL" ]]
+if [ ! -n "$SSH_CLIENT" ] && [ ! -n "$SSH_TTY" ]
 then
-    git clone https://github.com/chriskempson/base16-shell.git "$BASE16_SHELL"
+    BASE16_SHELL="$HOME/.local/share/base16-shell/"
+    if [[ ! -e "$BASE16_SHELL" ]]
+    then
+        git clone https://github.com/chriskempson/base16-shell.git "$BASE16_SHELL"
+    fi
+    if [[ ! -e "$HOME/.base16_theme" ]]
+    then
+        ln -s "$BASE16_SHELL/scripts/base16-onedark.sh" "$HOME/.base16_theme"
+    fi
+    [ -n "$PS1" ] && \
+        [ -s "$BASE16_SHELL/profile_helper.sh" ] && \
+            eval "$("$BASE16_SHELL/profile_helper.sh")"
 fi
-if [[ ! -e "$HOME/.base16_theme" ]]
-then
-    ln -s "$BASE16_SHELL/scripts/base16-onedark.sh" "$HOME/.base16_theme"
-fi
-[ -n "$PS1" ] && \
-    [ -s "$BASE16_SHELL/profile_helper.sh" ] && \
-        eval "$("$BASE16_SHELL/profile_helper.sh")"
 
 
 . $HOME/.bash-completion/git-completion.bash
