@@ -1,5 +1,4 @@
 alias ls="ls --color=auto"
-alias x="xargs"
 
 export PYTHONIOENCODING=UTF-8
 export EDITOR=vim
@@ -24,6 +23,21 @@ then
 else
     echo 'No fzf found, consider installing https://github.com/junegunn/fzf#installation'
 fi
+
+# Base16 Shell
+BASE16_SHELL="$HOME/.local/share/base16-shell/"
+if [[ ! -e "$BASE16_SHELL" ]]
+then
+    git clone https://github.com/chriskempson/base16-shell.git "$BASE16_SHELL"
+fi
+if [[ ! -e "$HOME/.base16_theme" ]]
+then
+    ln -s "$BASE16_SHELL/scripts/base16-onedark.sh" "$HOME/.base16_theme"
+fi
+[ -n "$PS1" ] && \
+    [ -s "$BASE16_SHELL/profile_helper.sh" ] && \
+        eval "$("$BASE16_SHELL/profile_helper.sh")"
+
 
 . $HOME/.bash-completion/git-completion.bash
 . $HOME/.config/common-functions.bash
