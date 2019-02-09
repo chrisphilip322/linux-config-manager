@@ -32,4 +32,6 @@ do
         mkdir -p "$HOME/$target_dir"
     fi
     cp "$line" "$HOME/$line"
+    chmod --reference="$line" "$HOME/$line"
+    chown --reference="$line" "$HOME/$line"
 done
