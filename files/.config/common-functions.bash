@@ -199,7 +199,7 @@ source-pyenv() {
     fi
 }
 
-tox() {
+detox() {
     for var in "$@"
     do
         if [[ "$var" == "-l" ]] || [[ "$var" == "-a" ]] || [[ "$var" == "--notest" ]]
@@ -218,6 +218,10 @@ tox() {
     fi
         git rev-parse HEAD >> .tox/last-run
     popd > /dev/null
+}
+
+tox() {
+    detox "$@"
 }
 
 # Source-able file to load all functions into shell

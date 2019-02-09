@@ -36,7 +36,7 @@ hi Todo guifg=#fa6c6c guibg=NONE guisp=NONE gui=NONE ctermfg=9 ctermbg=NONE cter
 hi Special guifg=#8600af guibg=NONE guisp=NONE gui=NONE ctermfg=91 ctermbg=NONE cterm=NONE
 hi LineNr guifg=#696969 guibg=NONE guisp=NONE gui=NONE ctermfg=242 ctermbg=NONE cterm=NONE
 hi StatusLine guifg=#c7c7c7 guibg=#4d4d4d guisp=#4d4d4d gui=italic ctermfg=251 ctermbg=239 cterm=NONE
-hi Normal guifg=#c7c7c7 guibg=#262626 guisp=#262626 gui=NONE ctermfg=251 ctermbg=235 cterm=NONE
+hi Normal guifg=#c7c7c7 guibg=#1d1f21 guisp=#1d1f21 gui=NONE ctermfg=251 ctermbg=0 cterm=NONE
 hi Label guifg=#00b0d7 guibg=NONE guisp=NONE gui=bold ctermfg=38 ctermbg=NONE cterm=bold
 "hi CTagsImport -- no settings --
 hi PMenuSel guifg=#192224 guibg=#BD9800 guisp=#BD9800 gui=NONE ctermfg=235 ctermbg=1 cterm=NONE
@@ -52,6 +52,8 @@ hi Character guifg=#A1A6A8 guibg=NONE guisp=NONE gui=NONE ctermfg=248 ctermbg=NO
 "hi Number guifg=#A1A6A8 guibg=NONE guisp=NONE gui=NONE ctermfg=248 ctermbg=NONE cterm=NONE
 hi Float guifg=#666666 guibg=NONE guisp=NONE gui=NONE ctermfg=242 ctermbg=NONE cterm=bold
 hi Number guifg=#666666 guibg=NONE guisp=NONE gui=NONE ctermfg=242 ctermbg=NONE cterm=bold
+hi Float guifg=#666666 guibg=NONE guisp=NONE gui=NONE ctermfg=242 ctermbg=NONE cterm=NONE
+hi Number guifg=#666666 guibg=NONE guisp=NONE gui=NONE ctermfg=242 ctermbg=NONE cterm=NONE
 hi Boolean guifg=#A1A6A8 guibg=NONE guisp=NONE gui=NONE ctermfg=248 ctermbg=NONE cterm=NONE
 hi Operator guifg=#d78800 guibg=NONE guisp=NONE gui=NONE ctermfg=172 ctermbg=NONE cterm=NONE
 hi CursorLine guifg=NONE guibg=#222E30 guisp=#222E30 gui=NONE ctermfg=NONE ctermbg=236 cterm=NONE
@@ -100,6 +102,7 @@ hi DiffAdd guifg=NONE guibg=#193224 guisp=#193224 gui=NONE ctermfg=NONE ctermbg=
 hi TabLine guifg=#192224 guibg=#5E6C70 guisp=#5E6C70 gui=bold ctermfg=235 ctermbg=66 cterm=bold
 hi cursorim guifg=#192224 guibg=#536991 guisp=#536991 gui=NONE ctermfg=235 ctermbg=60 cterm=NONE
 "hi clear -- no settings --
+hi PythonSelf ctermfg=6
 hi link pythonBuiltin Keyword
 
 hi TrailingSpace guifg=#121212 guibg=NONE guisp=NONE gui=NONE ctermfg=233 ctermbg=NONE cterm=reverse

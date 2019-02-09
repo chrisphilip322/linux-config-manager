@@ -99,6 +99,7 @@ function s:MkNonExDir(file, buf)
         endif
     endif
 endfunction
+
 augroup BWCCreateDir
     autocmd!
     autocmd BufWritePre * :call s:MkNonExDir(expand('<afile>'), +expand('<abuf>'))
@@ -150,6 +151,7 @@ Plug 'tpope/vim-commentary'
 Plug 'isruslan/vim-es6'
 Plug 'elmcast/elm-vim'
 Plug 'killphi/vim-ebnf'
+Plug 'chriskempson/base16-vim'
 call plug#end()
 
 """ ALE options
@@ -271,3 +273,8 @@ inoremap <special> <expr> <Esc>[200~ XTermPasteBegin()
 """
 
 let g:elm_setup_keybindings = 0
+augroup python
+    autocmd!
+    autocmd FileType python
+                \   syn keyword PythonSelf self
+augroup end
