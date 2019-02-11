@@ -199,7 +199,7 @@ source-pyenv() {
     fi
 }
 
-detox() {
+_tox_impl() {
     for var in "$@"
     do
         if [[ "$var" == "-l" ]] || [[ "$var" == "-a" ]] || [[ "$var" == "--notest" ]]
@@ -220,8 +220,30 @@ detox() {
     popd > /dev/null
 }
 
+detox() {
+    _tox_impl -p "$@"
+}
+
 tox() {
-    detox "$@"
+    _tox_impl "$@"
+}
+
+_get_exit_code() {
+    local EXIT="$?"
+    if [[ "$EXIT" != "0" ]]
+    then
+        echo " $(tput setaf 9)(${EXIT})$(tput sgr0)"
+    fi
+}
+
+function _set_default_ps1() {
+    RESET="\[$(tput sgr0)\]"
+    RED="\[$(tput setaf 9)\]"
+    GREEN="\[$(tput setaf 2)\]"
+    TEAL="\[$(tput setaf 14)\]"
+    HOSTNAME_GREEN="\[$(tput setaf 46)\]"
+
+    export PS1="${RED}\u${RESET}${GREEN}@${RESET}${HOSTNAME_GREEN}\h${RESET} ${GREEN}[${RESET}${TEAL}\w${RESET}${GREEN}]${RESET}\$(_get_exit_code)\n\$ "
 }
 
 # Source-able file to load all functions into shell

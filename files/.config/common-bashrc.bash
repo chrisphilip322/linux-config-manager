@@ -43,6 +43,7 @@ else
             eval "$("$BASE16_SHELL/profile_helper.sh")"
 fi
 
-
 . $HOME/.bash-completion/git-completion.bash
 . $HOME/.config/common-functions.bash
+
+_set_default_ps1
