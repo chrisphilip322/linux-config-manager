@@ -209,7 +209,11 @@ _tox_impl() {
         fi
     done
     pushd $(git root) > /dev/null
-        /usr/bin/env tox -l "$@" > .tox/last-run
+    if ! [[ -a .tox ]] && [[ -f tox.ini ]]
+    then
+        mkdir .tox
+    fi
+    /usr/bin/env tox -l "$@" > .tox/last-run
     if /usr/bin/env tox "$@"
     then
         :

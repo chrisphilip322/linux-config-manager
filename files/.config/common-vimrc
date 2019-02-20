@@ -277,4 +277,5 @@ augroup python
     autocmd!
     autocmd FileType python
                 \   syn keyword PythonSelf self
+                \   syn keyword PythonSelf cls
 augroup end
