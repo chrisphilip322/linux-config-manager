@@ -279,3 +279,5 @@ augroup python
                 \   syn keyword PythonSelf self
                 \   syn keyword PythonSelf cls
 augroup end
+
+source $HOME/.config/python.indent.vim  " use custom indentation settings for python
