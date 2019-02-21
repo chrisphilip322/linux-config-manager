@@ -28,10 +28,6 @@ function _run_tox() {
         if tox > /dev/null 2>&1
         then
             echo "success"
-        elif [[ "$FORCE_PUSH" == "1" ]]
-        then
-            echo "tox failed but pushing anyways because FORCE_PUSH=1" >&2
-            status=1
         else
             echo "tox failed, blocking push. You can push anyways by setting the envvar FORCE_PUSH=1" 2>&1
             status=1
@@ -55,10 +51,10 @@ do
         # Handle delete
     else
         pushd $(git root) > /dev/null
-        [[ "$(cat .tox/last-run)" == "$(/usr/bin/env tox -a; echo $local_sha)" ]]
+        [[ -f ".tox/last-run" ]] && [[ "$(cat .tox/last-run)" == "$(/usr/bin/env tox -a; echo $local_sha)" ]]
         last_run_valid=$?
         popd > /dev/null
-        if [[ $last_run_valid == "0" ]]
+        if [[ $last_run_valid == "0" ]] || [[ "$FORCE_PUSH" == "1" ]]
         then
             :
         else
