@@ -225,7 +225,7 @@ _tox_impl() {
 }
 
 detox() {
-    _tox_impl -p "$@"
+    _tox_impl -p auto "$@"
 }
 
 tox() {
