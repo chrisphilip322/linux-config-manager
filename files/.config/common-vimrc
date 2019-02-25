@@ -160,18 +160,15 @@ nmap <silent> <leader>ln <Plug>(ale_next_wrap)
 let g:ale_linters={
                 \   'python': ['pylint', 'mypy', 'flake8'],
                 \ }
+let g:ale_python_mypy_options = "--config-file ~/.config/mypy.cfg"
 let git_root = system('git rev-parse --show-toplevel')
-let git_root = strpart(git_root, 0, strlen(git_root)-1)
 if v:shell_error == 0
-    let g:ale_python_pylint_options = "--rcfile <(fds.lint --print-cfg pylint)"
-    let g:ale_python_flake8_options = "--config=<(fds.lint --print-cfg flake8)"
+    let git_root = substitute(git_root, '/*$', '', '')
     let mypy_cfg_path = git_root . '/setup.cfg'
     if filereadable(mypy_cfg_path)
         let has_mypy_section = system("grep -P '^\\[mypy\\]$' " . mypy_cfg_path)
         if strlen(has_mypy_section) !=# 0
             let g:ale_python_mypy_options = "--config-file " . mypy_cfg_path
-        else
-            let g:ale_python_mypy_options = "--config-file ~/.config/mypy.cfg"
         endif
     endif
 endif
