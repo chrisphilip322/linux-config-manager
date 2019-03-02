@@ -163,7 +163,7 @@ let g:ale_linters={
 let g:ale_python_mypy_options = "--config-file ~/.config/mypy.cfg"
 let git_root = system('git rev-parse --show-toplevel')
 if v:shell_error == 0
-    let git_root = substitute(git_root, '/*$', '', '')
+    let git_root = substitute(git_root, '/*\n\?$', '', '')
     let mypy_cfg_path = git_root . '/setup.cfg'
     if filereadable(mypy_cfg_path)
         let has_mypy_section = system("grep -P '^\\[mypy\\]$' " . mypy_cfg_path)
