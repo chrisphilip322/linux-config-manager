@@ -111,7 +111,8 @@ function git-branch-status() {
     local current_branch="$(git-current-branch 2> /dev/null)"
     if [[ -z "$current_branch" ]]
     then
-        return 1
+        git status
+        return 0
     fi
 
     local target_branch="$(git config custom.targetbranch)"
