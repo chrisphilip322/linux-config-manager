@@ -106,6 +106,6 @@ highlight ColorColumn ctermbg=234 guibg=#262626
 highlight WhiteSpaceInvis ctermfg=235
 highlight WhiteSpaceLeading ctermfg=240
 highlight WhiteSpaceTrailing ctermbg=red
-match WhiteSpaceInvis /\s/
-2match WhiteSpaceLeading / \zs /
-3match WhiteSpaceTrailing /\s\+$/
+autocmd BufWinEnter * match WhiteSpaceInvis /\s/
+autocmd BufWinEnter * 2match WhiteSpaceLeading / \zs /
+autocmd BufWinEnter * 3match WhiteSpaceTrailing /\s\+$/
