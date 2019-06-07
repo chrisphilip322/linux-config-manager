@@ -180,7 +180,7 @@ set rnu
 set mouse=nicr
 
 set list
-set listchars=tab:>-
+set listchars=tab:>-,space:·
 
 nnoremap <C-J> <C-W><C-J>
 nnoremap <C-H> <C-W><C-H>
@@ -204,13 +204,6 @@ let g:EasyMotion_smartcase = 1
 nnoremap <c-o> o<esc>
 inoremap <c-o> <esc>o
 inoremap <c-k> <esc>O
-
-highlight ExtraWhitespace ctermbg=red guibg=red
-match ExtraWhitespace /\s\+$/
-autocmd BufWinEnter * match ExtraWhitespace /\s\+$/
-autocmd InsertEnter * match ExtraWhitespace /\s\+\%#\@<!$/
-autocmd InsertLeave * match ExtraWhitespace /\s\+$/
-autocmd BufWinLeave * call clearmatches()
 
 function _SplitString()
     execute "normal! 81|bi'\<cr>'"
