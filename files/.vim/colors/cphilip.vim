@@ -100,7 +100,12 @@ hi cursorim guifg=#192224 guibg=#536991 guisp=#536991 gui=NONE ctermfg=235 cterm
 hi PythonSelf ctermfg=6
 hi link pythonBuiltin Keyword
 
-hi TrailingSpace guifg=#121212 guibg=NONE guisp=NONE gui=NONE ctermfg=233 ctermbg=NONE cterm=reverse
-match TrailingSpace /\s\+$/
-
 highlight ColorColumn ctermbg=234 guibg=#262626
+
+" Should be the "Normal" background color to be invisible
+highlight WhiteSpaceInvis ctermfg=235
+highlight WhiteSpaceLeading ctermfg=240
+highlight WhiteSpaceTrailing ctermbg=red
+match WhiteSpaceInvis /\s/
+2match WhiteSpaceLeading / \zs /
+3match WhiteSpaceTrailing /\s\+$/
