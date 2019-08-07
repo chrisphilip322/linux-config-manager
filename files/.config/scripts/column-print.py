@@ -33,9 +33,10 @@ lines = [
     for line in lines
     if line.strip()
 ]
+lines.sort(key=remove_codes)
 
 for row_count in itertools.count(1):
-  columns = list(list(g) for g in grouper(lines, row_count, (' ', '')))
+  columns = list(list(g) for g in grouper(lines, row_count, ''))
   width = sum(
       col_width(col)
       for col in columns
@@ -47,5 +48,5 @@ rows = zip(*columns)
 for row in rows:
   for col, cell in zip(columns, row):
     print(cell, end='')
-    print((2 + col_width(col) - len(cell[1])) * ' ', end='')
+    print((2 + col_width(col) - len(remove_codes(cell))) * ' ', end='')
   print()
