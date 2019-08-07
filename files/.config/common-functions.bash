@@ -251,6 +251,10 @@ function _set_default_ps1() {
     export PS1="${RED}\u${RESET}${GREEN}@${RESET}${HOSTNAME_GREEN}\h${RESET} ${GREEN}[${RESET}${TEAL}\w${RESET}${GREEN}]${RESET}\$(_get_exit_code)\n\$ "
 }
 
+function _column_print() {                                                                          
+  sort | COLUMNS=$(stty -a <"/dev/pts/1" | grep -Po '(?<=columns )\d+') ~/.config/scripts/column-print.py
+}                                                                                                   
+
 # Source-able file to load all functions into shell
 # Executable file that to run functions from not a shell
 # Functions without "^function " are 'private' and not runnable externally
