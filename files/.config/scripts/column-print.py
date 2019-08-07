@@ -2,9 +2,11 @@
 
 import itertools
 import os
+import re
 import sys
 
 import crayons
+
 
 def grouper(iterable, n, fillvalue=None):
     "Collect data into fixed-length chunks or blocks"
@@ -12,27 +14,24 @@ def grouper(iterable, n, fillvalue=None):
     args = [iter(iterable)] * n
     return itertools.zip_longest(*args, fillvalue=fillvalue)
 
-def col_width(column):
-  return max(len(cell[1]) for cell in column)
 
-COLORS = {
-    ' ': lambda _: '',
-    'M': crayons.blue,
-    'A': crayons.green,
-    'R': crayons.red,
-    'C': lambda s: crayons.white(s, bold=True),
-    '?': lambda s: crayons.red(s, bold=True),
-    '!': lambda s: crayons.green(s, bold=True),
-    'I': crayons.magenta
-}
+def col_width(column):
+  return max(len(remove_codes(cell)) for cell in column)
+
+
+code = '\x1b' + r'\[\d{,3}(;\d{,3}){,2}m'
+CODE_RE = re.compile(code)
+def remove_codes(s):
+  return CODE_RE.sub('', s)
+
 
 COLUMNS = int(os.environ['COLUMNS'])
 lines = sys.stdin.readlines()
 
 lines = [
-    (line[0], line[2:].strip())
+    line.strip()
     for line in lines
-    if line[0] != ' '
+    if line.strip()
 ]
 
 for row_count in itertools.count(1):
@@ -47,6 +46,6 @@ for row_count in itertools.count(1):
 rows = zip(*columns)
 for row in rows:
   for col, cell in zip(columns, row):
-    print(COLORS[cell[0]](cell[1]), end='')
+    print(cell, end='')
     print((2 + col_width(col) - len(cell[1])) * ' ', end='')
   print()
